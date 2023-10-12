@@ -58,10 +58,11 @@
 
 		<form action="/" method="post">
 			<label for="person">Selecciona una persona:</label>
-			<select id="person" name="person" required>
+			<select id="nombre" name="nombre" required>
 				<option value="">-- Selecciona --</option>
-				<!-- Populate this with registered people -->
-				<!-- Example: <option value="1">John Doe</option> -->
+				{% for name in names %}
+				<option value="{{ name }}">{{ name }}</option>
+				{% endfor %}
 				<option value="new">Agregar persona sin membresía</option></select
 			><br /><br />
 
@@ -72,7 +73,12 @@
 			</div>
 
 			<label for="actividad">Actividad:</label>
-			<input type="text" id="actividad" name="actividad" required /><br /><br />
+			<select id="actividad" name="actividad" required onchange="updatePrice()">
+				<option value="">-- Selecciona --</option>
+				{% for activity_name in activity_names %}
+				<option value="{{ activity_name }}">{{ activity_name }}</option>
+				{% endfor %}</select
+			><br /><br />
 
 			<label for="cantidad_personas">Cantidad de Personas:</label>
 			<input
@@ -82,11 +88,11 @@
 				required
 			/><br /><br />
 
-			<label for="pago_total">Pago Total:</label>
+			<label for="adelanto">Adelanto:</label>
 			<input
 				type="text"
-				id="pago_total"
-				name="pago_total"
+				id="adelanto"
+				name="adelanto"
 				required
 			/><br /><br />
 
@@ -95,7 +101,7 @@
 
 		<script>
 			// Toggle visibility of "newPersonForm" based on dropdown selection
-			document.getElementById("person").addEventListener("change", function () {
+			document.getElementById("nombre").addEventListener("change", function () {
 				const form = document.getElementById("newPersonForm");
 				if (this.value === "new") {
 					form.style.display = "block";
