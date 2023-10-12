@@ -52,12 +52,15 @@ def index():
     if request.method == "POST":
         # Handle the form submission
         nombre = request.form["nombre"]
+        if nombre == "new":
+            nombre = request.form["new_nombre"]
+
         actividad = request.form["actividad"].replace('"', '').strip()  # This will remove any double quotes from the input.
         cantidad_personas = int(request.form["cantidad_personas"])
         adelanto = float(request.form["adelanto"])
         precio_personalizado = (
             activities[actividad]["PRECIO_MEMBRESIA"]
-            if member_status[nombre] == "ACTIVO"
+            if nombre in member_status.keys() and member_status[nombre] == "ACTIVO"
             else activities[actividad]["PRECIO"]
         )
         pago_total = int(cantidad_personas) * precio_personalizado
@@ -82,17 +85,8 @@ def index():
             "Falta pagar": falta_pagar,
             "Ganancia": ganancia,
         }
+        print(new_reservation)
         reservaciones_table.create(new_reservation)
-        # You can process or save the data as needed.
-        # For now, let's return it as a JSON response:
-        return jsonify(
-            {
-                "Nombre": nombre,
-                "Actividad": actividad,
-                "Cantidad de Personas": cantidad_personas,
-                "pago total": pago_total,
-            }
-        )
 
     return render_template("form.html", names=names, activity_names=activity_names)
 
