@@ -42,9 +42,6 @@ def index():
         record["fields"]["ACTIVIDADES"]: {
             "PRECIO": record["fields"]["PRECIO"],
             "PRECIO_MEMBRESIA": record["fields"]["PRECIO_MEMBRESIA"],
-            "COSTO_GUIA": record["fields"]["COSTO_GUIA"],
-            "COSTO_COMIDA": record["fields"]["COSTO_COMIDA"],
-            "COSTO_TALLER": record["fields"]["COSTO_TALLER"],
         }
         for record in actividades
     }
@@ -60,6 +57,9 @@ def index():
         )  # This will remove any double quotes from the input.
         cantidad_personas = int(request.form["cantidad_personas"])
         adelanto = float(request.form["adelanto"])
+        costo_guia = int(request.form["costo_guia"])
+        costo_taller = int(request.form["costo_taller"])
+        costo_comida = int(request.form["costo_comida"])
         precio_personalizado = (
             activities[actividad]["PRECIO_MEMBRESIA"]
             if nombre in member_status.keys() and member_status[nombre] == "ACTIVO"
@@ -67,11 +67,7 @@ def index():
         )
         pago_total = int(cantidad_personas) * precio_personalizado
         falta_pagar = pago_total - int(adelanto)
-        costo = (
-            activities[actividad]["COSTO_GUIA"]
-            + activities[actividad]["COSTO_COMIDA"]
-            + activities[actividad]["COSTO_TALLER"]
-        )
+        costo = costo_guia + costo_taller + costo_comida
         costo_total = int(cantidad_personas) * costo
         ganancia = pago_total - costo_total
 
@@ -87,11 +83,9 @@ def index():
             "Pago Total": pago_total,
             "Falta pagar": falta_pagar,
             "Ganancia": ganancia,
-            "Costo_Guia": activities[actividad]["COSTO_GUIA"] * int(cantidad_personas),
-            "Costo_Comida": activities[actividad]["COSTO_COMIDA"]
-            * int(cantidad_personas),
-            "Costo_Taller": activities[actividad]["COSTO_TALLER"]
-            * int(cantidad_personas),
+            "Costo_Guia": costo_guia * int(cantidad_personas),
+            "Costo_Comida": costo_comida * int(cantidad_personas),
+            "Costo_Taller": costo_taller * int(cantidad_personas),
         }
         print(new_reservation)
         reservaciones_table.create(new_reservation)
