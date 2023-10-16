@@ -60,6 +60,10 @@ def index():
         costo_guia = int(request.form["costo_guia"])
         costo_taller = int(request.form["costo_taller"])
         costo_comida = int(request.form["costo_comida"])
+        fecha_str = request.form["fecha"]
+        fecha_obj = datetime.strptime(fecha_str, "%Y-%m-%dT%H:%M")
+        formatted_fecha = fecha_obj.strftime("%d/%m/%Y %I:%M %p")
+
         precio_personalizado = (
             activities[actividad]["PRECIO_MEMBRESIA"]
             if nombre in member_status.keys() and member_status[nombre] == "ACTIVO"
@@ -86,6 +90,7 @@ def index():
             "Costo_Guia": costo_guia * int(cantidad_personas),
             "Costo_Comida": costo_comida * int(cantidad_personas),
             "Costo_Taller": costo_taller * int(cantidad_personas),
+            "Fecha Actividad": formatted_fecha,
         }
         print(new_reservation)
         reservaciones_table.create(new_reservation)
