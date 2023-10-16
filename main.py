@@ -70,7 +70,8 @@ def index():
             + activities[actividad]["COSTO_COMIDA"]
             + activities[actividad]["COSTO_TALLER"]
         )
-        ganancia = pago_total - costo
+        costo_total = int(cantidad_personas) * costo
+        ganancia = pago_total - costo_total
 
         # Create a new row in RESERVACIONES
         new_reservation = {
