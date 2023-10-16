@@ -55,7 +55,9 @@ def index():
         if nombre == "new":
             nombre = request.form["new_nombre"]
 
-        actividad = request.form["actividad"].replace('"', '').strip()  # This will remove any double quotes from the input.
+        actividad = (
+            request.form["actividad"].replace('"', "").strip()
+        )  # This will remove any double quotes from the input.
         cantidad_personas = int(request.form["cantidad_personas"])
         adelanto = float(request.form["adelanto"])
         precio_personalizado = (
@@ -85,6 +87,11 @@ def index():
             "Pago Total": pago_total,
             "Falta pagar": falta_pagar,
             "Ganancia": ganancia,
+            "Costo_Guia": activities[actividad]["COSTO_GUIA"] * int(cantidad_personas),
+            "Costo_Comida": activities[actividad]["COSTO_COMIDA"]
+            * int(cantidad_personas),
+            "Costo_Taller": activities[actividad]["COSTO_TALLER"]
+            * int(cantidad_personas),
         }
         print(new_reservation)
         reservaciones_table.create(new_reservation)
