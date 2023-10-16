@@ -62,7 +62,7 @@ def index():
         costo_comida = int(request.form["costo_comida"])
         fecha_str = request.form["fecha"]
         fecha_obj = datetime.strptime(fecha_str, "%Y-%m-%dT%H:%M")
-        formatted_fecha = fecha_obj.strftime("%d/%m/%Y %I:%M %p")
+        formatted_fecha = fecha_obj.isoformat() + "Z"  # 'Z' indicates UTC time
 
         precio_personalizado = (
             activities[actividad]["PRECIO_MEMBRESIA"]
