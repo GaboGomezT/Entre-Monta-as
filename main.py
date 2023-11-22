@@ -6,6 +6,7 @@ load_dotenv()
 import os
 from flask import Flask, jsonify, request, render_template
 from pyairtable import Table
+from log_config import setup_logging
 
 # Configuration
 AIRTABLE_API_KEY = os.getenv("AIRTABLE_API_KEY")
@@ -23,6 +24,10 @@ reservaciones_table = Table(
 
 app = Flask(__name__)
 
+# Set up logging and add the file handler to the app logger
+file_handler = setup_logging()
+app.logger.addHandler(file_handler)
+
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -30,6 +35,8 @@ def index():
     miembros = miembros_table.all()
     actividades = actividades_table.all()
 
+
+    app.logger.info(f"miembros: {miembros}")
     # Extract names for dropdown
     names = [record["fields"]["Name"] for record in miembros]
     member_status = {
