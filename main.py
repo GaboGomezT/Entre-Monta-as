@@ -36,9 +36,13 @@ def index():
     actividades = actividades_table.all()
 
 
-    app.logger.info(f"miembros: {miembros}")
     # Extract names for dropdown
-    names = [record["fields"]["Name"] for record in miembros]
+    names = []
+    for record in miembros:
+      try:
+        names.append(record["fields"]["Name"])
+      except KeyError:
+         app.logger.error("KeyError: %s", record)
     member_status = {
         record["fields"]["Name"]: record["fields"]["Status"] for record in miembros
     }
