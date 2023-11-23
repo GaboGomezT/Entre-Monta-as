@@ -35,13 +35,26 @@ def index():
     miembros = miembros_table.all()
     actividades = actividades_table.all()
 
+    # Filter miembros for empty fields
+    miembros = list(filter(lambda record: record["fields"], miembros))
+
+    # Filter actividades for empty fields
+    actividades = list(filter(lambda record: record["fields"], actividades))
+
+    # Remove trailing spaces from names
+    miembros = [
+      {**record, "fields": {**record["fields"], "Name": record["fields"]["Name"].strip()}}
+      for record in miembros
+    ]
+
+    # Remove trailing spaces from activities
+    actividades = [
+      {**record, "fields": {**record["fields"], "ACTIVIDADES": record["fields"]["ACTIVIDADES"].strip()}}
+      for record in actividades
+    ]
+
     # Extract names for dropdown
-    names = []
-    for record in miembros:
-        try:
-            names.append(record["fields"]["Name"])
-        except KeyError:
-            app.logger.error("KeyError: %s", record)
+    names = [record["fields"]["Name"] for record in miembros]
     member_status = {
         record["fields"]["Name"]: record["fields"]["Status"] for record in miembros
     }
