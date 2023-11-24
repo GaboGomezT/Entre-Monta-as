@@ -57,20 +57,19 @@
 		<h2>Nueva Reservación</h2>
 
 		<form action="/" method="post">
-			<label for="person">Selecciona una persona:</label>
-			<select id="nombre" name="nombre" required>
-				<option value="">-- Selecciona --</option>
-				{% for name in names %}
-				<option value="{{ name }}">{{ name }}</option>
-				{% endfor %}
-				<option value="new">Agregar persona sin membresía</option></select
-			><br /><br />
-
+			{% if name %}
+			<div id="existingMember">
+				<label for="nombre">Bienvenido: </label>
+				<h2>{{ name }}</h2>
+				<br /><br />
+			</div>
+			{% else %}
 			<!-- This section will be hidden unless "Add New Person" is selected -->
-			<div id="newPersonForm" style="display: none">
+			<div id="newPersonForm">
 				<label for="new_nombre">Nombre:</label>
 				<input type="text" id="new_nombre" name="new_nombre" /><br /><br />
 			</div>
+			{% endif %}
 
 			<label for="actividad">Actividad:</label>
 			<select id="actividad" name="actividad" required onchange="updatePrice()">

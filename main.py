@@ -31,6 +31,9 @@ app.logger.addHandler(file_handler)
 
 @app.route("/", methods=["GET", "POST"])
 def index():
+    # Fetch UUID from query parameters, if present
+    uuid_param = request.args.get('uuid')
+
     # Fetch all records from MIEMBROS table
     miembros = miembros_table.all()
     actividades = actividades_table.all()
@@ -53,8 +56,6 @@ def index():
       for record in actividades
     ]
 
-    # Extract names for dropdown
-    names = [record["fields"]["Name"] for record in miembros]
     member_status = {
         record["fields"]["Name"]: record["fields"]["Status"] for record in miembros
     }
@@ -118,7 +119,19 @@ def index():
         print(new_reservation)
         reservaciones_table.create(new_reservation)
 
-    return render_template("form.html", names=names, activity_names=activity_names)
+    name = None
+    if uuid_param:
+        # From members table, fetch the record with the given UUID
+        # UUID is a key in the fields dictionary
+        try:
+          # find the record with the given UUID
+          member = next(filter(lambda record: record["fields"]["UUID"] == uuid_param, miembros))
+          # get the name from the record
+          name = member["fields"]["Name"]
+        except StopIteration:
+          app.logger.error(f"UUID {uuid_param} not found in members table")
+
+    return render_template("form.html", activity_names=activity_names, name=name)
 
 
 if __name__ == "__main__":
