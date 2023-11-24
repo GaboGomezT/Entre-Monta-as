@@ -70,12 +70,23 @@
 			{% endif %}
 
 			<label for="actividad">Actividad:</label>
-			<select id="actividad" name="actividad" required onchange="updatePrice()">
+			<select
+				id="actividad"
+				name="actividad"
+				required
+				onchange="updateActivityName()"
+			>
 				<option value="">-- Selecciona --</option>
 				{% for activity_name in activity_names %}
 				<option value="{{ activity_name }}">{{ activity_name }}</option>
 				{% endfor %}</select
 			><br /><br />
+
+			<div id="activityPrice" style="display: none">
+				<label for="precio">Precio:</label>
+				<span id="precio"></span>
+				<br /><br />
+			</div>
 
 			<label for="fecha">Fecha y Hora de Reservación:</label>
 			<input
@@ -87,5 +98,31 @@
 
 			<input type="submit" value="Submit" />
 		</form>
+		<script>
+			let activities = "{{ activities }}";
+			let name = "{{ name }}";
+			function updateActivityName() {
+				let select = document.getElementById("actividad");
+				let activityName = select.options[select.selectedIndex].text;
+				let jsonString = activities.replace(/&#34;/g, '"');
+				let activityPrices;
+				try {
+					activityPrices = JSON.parse(jsonString);
+					let price;
+					if (name === "None") {
+						price = activityPrices[activityName].PRECIO;
+					} else {
+						price = activityPrices[activityName].PRECIO_MEMBRESIA;
+					}
+					let activityPriceDiv = document.getElementById("activityPrice");
+					activityPriceDiv.style.display = "block";
+					// Get the span tag with id "precio" inside activityPriceDiv
+					let precioSpan = activityPriceDiv.querySelector("#precio");
+          precioSpan.innerHTML = price;
+				} catch (e) {
+					console.error("Error parsing JSON:", e);
+				}
+			}
+		</script>
 	</body>
 </html>

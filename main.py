@@ -1,5 +1,6 @@
 from datetime import datetime
 from dotenv import load_dotenv
+import json
 
 load_dotenv()
 
@@ -32,7 +33,7 @@ app.logger.addHandler(file_handler)
 @app.route("/", methods=["GET", "POST"])
 def index():
     # Fetch UUID from query parameters, if present
-    uuid_param = request.args.get('uuid')
+    uuid_param = request.args.get("uuid")
 
     # Fetch all records from MIEMBROS table
     miembros = miembros_table.all()
@@ -46,14 +47,23 @@ def index():
 
     # Remove trailing spaces from names
     miembros = [
-      {**record, "fields": {**record["fields"], "Name": record["fields"]["Name"].strip()}}
-      for record in miembros
+        {
+            **record,
+            "fields": {**record["fields"], "Name": record["fields"]["Name"].strip()},
+        }
+        for record in miembros
     ]
 
     # Remove trailing spaces from activities
     actividades = [
-      {**record, "fields": {**record["fields"], "ACTIVIDADES": record["fields"]["ACTIVIDADES"].strip()}}
-      for record in actividades
+        {
+            **record,
+            "fields": {
+                **record["fields"],
+                "ACTIVIDADES": record["fields"]["ACTIVIDADES"].strip(),
+            },
+        }
+        for record in actividades
     ]
 
     member_status = {
@@ -124,14 +134,22 @@ def index():
         # From members table, fetch the record with the given UUID
         # UUID is a key in the fields dictionary
         try:
-          # find the record with the given UUID
-          member = next(filter(lambda record: record["fields"]["UUID"] == uuid_param, miembros))
-          # get the name from the record
-          name = member["fields"]["Name"]
+            # find the record with the given UUID
+            member = next(
+                filter(lambda record: record["fields"]["UUID"] == uuid_param, miembros)
+            )
+            # get the name from the record
+            name = member["fields"]["Name"]
         except StopIteration:
-          app.logger.error(f"UUID {uuid_param} not found in members table")
+            app.logger.error(f"UUID {uuid_param} not found in members table")
 
-    return render_template("form.html", activity_names=activity_names, name=name)
+    serialized_activities = json.dumps(activities)
+    return render_template(
+        "form.html",
+        activity_names=activity_names,
+        name=name,
+        activities=serialized_activities,
+    )
 
 
 if __name__ == "__main__":
