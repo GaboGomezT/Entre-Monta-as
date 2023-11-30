@@ -60,6 +60,14 @@
 			{% if name %}
 			<div id="existingMember">
 				<label for="nombre">Bienvenido: </label>
+				<input
+					type="text"
+					id="nombre"
+					name="nombre"
+					value="{{name}}"
+					style="display: none"
+				/>
+
 				<h2>{{ name }}</h2>
 			</div>
 			{% else %}
