@@ -71,13 +71,20 @@ def index():
     }
 
     # # Extract activiity names and prices for dropdown
-    activity_names = [record["fields"]["ACTIVIDADES"] for record in actividades]
+    active_items = [
+        item for item in actividades if item["fields"].get("ACTIVO") == True
+    ]
+    activity_names = [record["fields"]["ACTIVIDADES"] for record in active_items]
+
     activities = {
         record["fields"]["ACTIVIDADES"]: {
             "PRECIO": record["fields"]["PRECIO"],
             "PRECIO_MEMBRESIA": record["fields"]["PRECIO_MEMBRESIA"],
+            "COSTO_GUIA": record["fields"]["COSTO_GUIA"],
+            "COSTO_TALLER": record["fields"]["COSTO_TALLER"],
+            "COSTO_COMIDA": record["fields"]["COSTO_COMIDA"],
         }
-        for record in actividades
+        for record in active_items
     }
 
     if request.method == "POST":
@@ -89,25 +96,23 @@ def index():
         actividad = (
             request.form["actividad"].replace('"', "").strip()
         )  # This will remove any double quotes from the input.
-        cantidad_personas = int(request.form["cantidad_personas"])
-        adelanto = float(request.form["adelanto"])
-        costo_guia = int(request.form["costo_guia"])
-        costo_taller = int(request.form["costo_taller"])
-        costo_comida = int(request.form["costo_comida"])
         fecha_str = request.form["fecha"]
         fecha_obj = datetime.strptime(fecha_str, "%Y-%m-%dT%H:%M")
         formatted_fecha = fecha_obj.isoformat() + "Z"  # 'Z' indicates UTC time
+
+        marketing = request.form["marketing"]
 
         precio_personalizado = (
             activities[actividad]["PRECIO_MEMBRESIA"]
             if nombre in member_status.keys() and member_status[nombre] == "ACTIVO"
             else activities[actividad]["PRECIO"]
         )
-        pago_total = int(cantidad_personas) * precio_personalizado
-        falta_pagar = pago_total - int(adelanto)
-        costo = costo_guia + costo_taller + costo_comida
-        costo_total = int(cantidad_personas) * costo
-        ganancia = pago_total - costo_total
+
+        costo_guia = activities[actividad]["COSTO_GUIA"]
+        costo_taller = activities[actividad]["COSTO_TALLER"]
+        costo_comida = activities[actividad]["COSTO_COMIDA"]
+        costo_total = costo_guia + costo_taller + costo_comida
+        ganancia = precio_personalizado - costo_total
 
         # Create a new row in RESERVACIONES
         new_reservation = {
@@ -116,14 +121,11 @@ def index():
             ),  # Assuming you want the current timestamp. Adjust as needed.
             "Actividad": actividad,
             "Nombre": nombre,
-            "Adelanto": adelanto,
-            "Personas": cantidad_personas,
-            "Pago Total": pago_total,
-            "Falta pagar": falta_pagar,
             "Ganancia": ganancia,
-            "Costo_Guia": costo_guia * int(cantidad_personas),
-            "Costo_Comida": costo_comida * int(cantidad_personas),
-            "Costo_Taller": costo_taller * int(cantidad_personas),
+            "Marketing": marketing,
+            "Costo_Guia": costo_guia,
+            "Costo_Comida": costo_comida,
+            "Costo_Taller": costo_taller,
             "Fecha Actividad": formatted_fecha,
         }
         print(new_reservation)

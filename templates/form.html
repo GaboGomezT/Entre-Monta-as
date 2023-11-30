@@ -64,8 +64,8 @@
 			</div>
 			{% else %}
 			<div id="newPersonForm">
-				<label for="new_nombre">Nombre:</label>
-				<input type="text" id="new_nombre" name="new_nombre" /><br /><br />
+				<label for="nombre">Nombre:</label>
+				<input type="text" id="nombre" name="nombre" /><br /><br />
 			</div>
 			{% endif %}
 
@@ -85,8 +85,8 @@
 			<div id="activityPrice" style="display: none">
 				<label for="precio">Precio:</label>
 				<span id="precio"></span>
-				<br /><br />
 			</div>
+			<br />
 
 			<label for="fecha">Fecha y Hora de Reservación:</label>
 			<input
@@ -95,6 +95,16 @@
 				name="fecha"
 				required
 			/><br /><br />
+
+			<label for="marketing">¿Cómo te enteraste de nosotros?</label>
+			<select id="marketing" name="marketing" required>
+				<option value="">-- Selecciona --</option>
+				<option value="Facebook">Facebook</option>
+				<option value="Instagram">Instagram</option>
+				<option value="Tiktok">Tiktok</option>
+				<option value="Airbnb">Airbnb Experiences</option>
+				<option value="Amigo">Amigo</option></select
+			><br /><br />
 
 			<input type="submit" value="Submit" />
 		</form>
@@ -118,7 +128,7 @@
 					activityPriceDiv.style.display = "block";
 					// Get the span tag with id "precio" inside activityPriceDiv
 					let precioSpan = activityPriceDiv.querySelector("#precio");
-          precioSpan.innerHTML = price;
+					precioSpan.innerHTML = price;
 				} catch (e) {
 					console.error("Error parsing JSON:", e);
 				}
