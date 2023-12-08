@@ -127,6 +127,7 @@ def index():
             "Costo_Comida": costo_comida,
             "Costo_Taller": costo_taller,
             "Fecha Actividad": formatted_fecha,
+            "Pago Total": precio_personalizado,
         }
         print(new_reservation)
         reservaciones_table.create(new_reservation)
